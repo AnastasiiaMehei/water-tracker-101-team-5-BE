@@ -14,7 +14,7 @@ import { logoutUserController } from '../controllers/auth.js';
 import { refreshUserSessionController } from '../controllers/auth.js';
 import { resetPasswordSchema } from '../validation/auth.js';
 import { resetPasswordController } from '../controllers/auth.js';
-import { validateBody } from '../midelwares/validateBody.js';
+import { validateBody } from '../middlewares/validateBody.js';
 
 const router = Router();
 
