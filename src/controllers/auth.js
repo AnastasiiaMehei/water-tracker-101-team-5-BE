@@ -3,10 +3,11 @@ import {
   loginUser,
   logoutUser,
   refreshUsersSession,
-  requestResetToken,
-  resetPassword,
 } from '../services/auth.js';
 import { ONE_DAY } from '../constants/index.js';
+import { UsersCollection } from '../db/models/user.js';
+import createHttpError from 'http-errors';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 
 export const registerUserController = async (req, res) => {
   const user = await registerUser(req.body);
@@ -70,21 +71,69 @@ export const refreshUserSessionController = async (req, res) => {
     },
   });
 };
+export const updateAvatarController = async (req, res) => {
+  const userId = req.user._id;
+  const user = await UsersCollection.findById(userId);
 
-export const requestResetEmailController = async (req, res) => {
-  await requestResetToken(req.body.email);
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  let avatarUrl;
+
+  if (req.file) {
+    avatarUrl = await saveFileToUploadDir(req.file);
+  }
+
+  await UsersCollection.findByIdAndUpdate(userId, { photo: avatarUrl });
+
+  res.status(200).json({ message: 'Avatar updated successfully' });
+};
+export const getUserInfoController = async (req, res) => {
+  const userId = req.user._id;
+  if (!userId) {
+    throw createHttpError(401, 'User not authenticated');
+  }
+  const user = await UsersCollection.findById(userId);
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
   res.status(200).json({
-    message: 'Reset password email was successfully sent!',
     status: 200,
-    data: {},
+    message: 'User info retrieved successfully',
+    data: user,
   });
 };
+export const updateUserInfoController = async (req, res) => {
+  const userId = req.user._id;
+  const user = await UsersCollection.findById(userId);
 
-export const resetPasswordController = async (req, res) => {
-  await resetPassword(req.body);
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const allowedFields = ['name', 'gender', 'dailyNorma'];
+  const fieldsToUpdate = {};
+
+  Object.keys(req.body).forEach((field) => {
+    if (allowedFields.includes(field)) {
+      fieldsToUpdate[field] = req.body[field];
+    }
+  });
+
+  if (Object.keys(fieldsToUpdate).length === 0) {
+    throw createHttpError(400, 'No valid fields to update');
+  }
+
+  const updatedUser = await UsersCollection.findByIdAndUpdate(
+    userId,
+    { $set: fieldsToUpdate },
+    { new: true },
+  );
   res.status(200).json({
-    message: 'Password was successfully reset!',
     status: 200,
-    data: {},
+    message: 'User profile updated successfully',
+    data: updatedUser,
   });
 };
