@@ -1,28 +1,17 @@
 import express from 'express';
 import cors from 'cors';
-// import pino from 'pino-http';
+import pino from 'pino-http';
 import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
 import { env } from './utils/env.js';
-import router from './routes/index.js';
-import { UPLOAD_DIR } from './constants/index.js';
-// import pino from 'pino';
-import { notFoundHandler } from './midelwares/notFoundHandler.js';
-import { swaggerDocs } from './midelwares/swaggerDocs.js';
 import { errorHandler } from './midelwares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import router from './routes/index.js';
+import cookieParser from 'cookie-parser';
+import { UPLOAD_DIR } from './constants/index.js';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 dotenv.config();
 const PORT = env('PORT', '8080');
-// pino
 
-// const logger = pino({
-//   level: 'info',
-// });
-
-// export const loggerMiddleware = (req, res, next) => {
-//   logger.info('Request', { req });
-//   next();
-// };
-//
 export function setupServer() {
   const app = express();
   app.use(
@@ -32,19 +21,20 @@ export function setupServer() {
     }),
   );
   app.use(cors());
-  //   app.use(
-  //     pino({
-  //       transport: {
-  //         target: 'pino-pretty',
-  //       },
-  //     }),
-  //   );
+  app.use(
+    pino({
+      transport: {
+        target: 'pino-pretty',
+      },
+    }),
+  );
   app.use(cookieParser());
   app.get('/', (req, res) => {
     res.json({
       message: 'Hello world!',
     });
   });
+  // app.use(contactsRouter);
   app.use(router);
   app.use('/uploads', express.static(UPLOAD_DIR));
   app.use('/api-docs', swaggerDocs());
