@@ -1,8 +1,8 @@
-post:
+patch:
   tags:
     - Auth
-  summary: Register a new user
-  operationId: registerUser
+  summary: Update user profile
+  operationId: updateUserProfile
   requestBody:
     required: true
     content:
@@ -10,15 +10,18 @@ post:
         schema:
           type: object
           properties:
-            email:
+            name:
               type: string
-              example: user@example.com
-            password:
+              example: John Doe
+            gender:
               type: string
-              example: password123
+              example: Man
+            dailyNorma:
+              type: integer
+              example: 2000
   responses:
-    '201':
-      description: Successfully registered a user
+    '200':
+      description: User profile updated successfully
       content:
         application/json:
           schema:
@@ -26,10 +29,10 @@ post:
             properties:
               status:
                 type: integer
-                example: 201
+                example: 200
               message:
                 type: string
-                example: Successfully registered a user!
+                example: User profile updated successfully
               data:
                 $ref: '#/components/schemas/User'
     '400':
@@ -44,17 +47,11 @@ post:
                 example: 400
               message:
                 type: string
-                example: Bad Request
-              errors:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    message:
-                      type: string
-                      example: 'Email is required'
-    '409':
-      description: Conflict
+                example: No valid fields to update
+    '401':
+      $ref: '../../components/responses/401.yaml'
+    '404':
+      description: User not found
       content:
         application/json:
           schema:
@@ -62,10 +59,10 @@ post:
             properties:
               status:
                 type: integer
-                example: 409
+                example: 404
               message:
                 type: string
-                example: Email in use
+                example: User not found
     '500':
       description: Internal Server Error
       content:

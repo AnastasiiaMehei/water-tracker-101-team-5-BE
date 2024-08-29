@@ -1,21 +1,23 @@
-# /swagger/paths/auth/logout.yaml
-
 post:
   tags:
-    - auth
-  summary: Logout a user
+    - Auth
+  summary: Logout user
   operationId: logoutUser
-  description: Logout the currently authenticated user.
   responses:
     '204':
       description: Successfully logged out
-    '400':
-      $ref: '../../components/responses.yaml#/responses/IllegalInput'
-    '404':
-      description: Session not found
+    '401':
+      $ref: '../../components/responses/401.yaml'
+    '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:
-            $ref: '../../components/schemas.yaml#/schemas/ErrorResponse'
-    '500':
-      $ref: '../../components/responses.yaml#/responses/GeneralError'
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              message:
+                type: string
+                example: Something went wrong

@@ -1,0 +1,20 @@
+type: object
+properties:
+  _id:
+    type: string
+    example: 60d0fe4f5311236168a109ca
+  email:
+    type: string
+    example: user@example.com
+  name:
+    type: string
+    example: User
+  gender:
+    type: string
+    example: Man
+  dailyNorma:
+    type: integer
+    example: 1500
+  photo:
+    type: string
+    example: http://example.com/photo.jpg

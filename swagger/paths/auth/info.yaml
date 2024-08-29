@@ -1,11 +1,11 @@
-post:
+get:
   tags:
     - Auth
-  summary: Refresh user session
-  operationId: refreshUserSession
+  summary: Get user info
+  operationId: getUserInfo
   responses:
     '200':
-      description: Successfully refreshed a session
+      description: User info retrieved successfully
       content:
         application/json:
           schema:
@@ -16,15 +16,24 @@ post:
                 example: 200
               message:
                 type: string
-                example: Successfully refreshed a session!
+                example: User info retrieved successfully
               data:
-                type: object
-                properties:
-                  accessToken:
-                    type: string
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                $ref: '#/components/schemas/User'
     '401':
       $ref: '../../components/responses/401.yaml'
+    '404':
+      description: User not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: User not found
     '500':
       description: Internal Server Error
       content:

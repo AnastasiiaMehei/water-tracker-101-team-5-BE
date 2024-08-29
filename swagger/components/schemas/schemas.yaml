@@ -7,10 +7,10 @@ schemas:
       - email
       - password
     properties:
-      email:
+        email:
         type: string
         format: email
-        example: user@example.com
+        example: john.doe@example.com
       password:
         type: string
         format: password
@@ -25,12 +25,12 @@ schemas:
       email:
         type: string
         format: email
-        example: user@example.com
+        example: john.doe@example.com
       password:
         type: string
         format: password
-        example: password12345
-
+        example: password123
+  
   UserResponse:
     type: object
     properties:
